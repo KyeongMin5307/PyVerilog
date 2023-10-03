@@ -1,4 +1,4 @@
-from PortIn import *
+from .PortIn import PortIn
 
 class PortClk(PortIn):
     def __init__(self, attrs):

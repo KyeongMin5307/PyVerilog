@@ -1,5 +1,5 @@
-#from Generic import *
-from Net import *
+# from .Generic import Generic
+from .Net import Net
 
 class Port(Net):
 

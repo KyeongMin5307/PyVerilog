@@ -1,4 +1,4 @@
-from Port import *
+from .Port import Port
 
 class PortOut(Port):
 

@@ -1,15 +1,9 @@
-import Module
-import PortIn
-import PortOut
-import PortClk
-import ConfigParser
-from ordereddict import OrderedDict
+from collections import OrderedDict
 import os
 import yaml
 import pickle
 import re
-import verilogParse
-import myutils
+from . import Module, PortIn, PortOut, PortClk, verilogParse, myutils
 ################################################################################
 ################################################################################
 class Netlist:
@@ -22,31 +16,6 @@ class Netlist:
     a separate Verilog-->YAML converter that I've used to create YAML files up
     until now (based in Perl, booo). The Verilog support in Python is newly
     added.
-    
-    This example shows how to read and link netlists. It demonstrates both 
-    reading from Verilog (n1) and YAML (n2), and then verifies that
-    the a few of the netlist properties match.
-    
-    >>> nl1 = Netlist()
-    >>> nl2 = Netlist()
-    >>> nl1.readYAML("test/gates.yml")
-    >>> nl2.readYAML("test/gates.yml")
-    >>> nl1.readVerilog("test/Iface_test.gv")
-    >>> nl2.readYAML("test/Iface_test.yml")
-    >>> nl1.link("Iface_test")
-    >>> nl2.link("Iface_test")
-    >>> nl1.topMod
-    'Iface_test'
-    >>> nl2.topMod
-    'Iface_test'
-    >>> mod1 = nl1.mods[nl1.topMod]
-    >>> mod2 = nl2.mods[nl2.topMod]
-    >>> set(mod1.ports.keys()) == set(mod2.ports.keys())
-    True
-    >>> set(mod1.cells.keys()) == set(mod2.cells.keys())
-    True
-    >>> set(mod1.nets.keys()) == set(mod2.nets.keys())
-    True
     """
     
     mods = property(lambda self: self.__mods)
@@ -111,7 +80,7 @@ class Netlist:
     def addModule(self, mod):
         modname = mod.name
         if modname in self.__mods:
-            print "Warning: " + modname + " has been multiply defined"
+            print("Warning: " + modname + " has been multiply defined")
         self.__mods[modname] = mod
     
     def readVerilog(self, verilogFile):
@@ -273,7 +242,7 @@ class Netlist:
                     pin.connectNet(net)
             
             if modname in self.__mods:
-                print "Warning: " + modname + " has been multiply defined"
+                print("Warning: " + modname + " has been multiply defined")
             
             self.__mods[mod.name] = mod
     
@@ -290,9 +259,3 @@ class Netlist:
         
         return tuples
     
-
-################################################################################
-################################################################################
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()

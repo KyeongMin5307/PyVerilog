@@ -68,11 +68,14 @@ import sys
 
 __version__ = "1.0.10"
 
-from pyparsing import Literal, CaselessLiteral, Keyword, Word, Upcase, OneOrMore, ZeroOrMore, \
+from pyparsing import Literal, CaselessLiteral, Keyword, Word, OneOrMore, ZeroOrMore, \
         Forward, NotAny, delimitedList, Group, Optional, Combine, alphas, nums, restOfLine, cStyleComment, \
         alphanums, printables, dblQuotedString, empty, ParseException, ParseResults, MatchFirst, oneOf, GoToColumn, \
-        ParseResults,StringEnd, FollowedBy, ParserElement, And, Regex, cppStyleComment#,__version__
+        ParseResults,StringEnd, FollowedBy, ParserElement, And, Regex, cppStyleComment
 import pyparsing
+
+from . import Module, PortIn, PortOut, Cell, PortClk
+
 usePackrat = True
 usePsyco = False
 
@@ -93,7 +96,7 @@ if usePsyco:
         import psyco
         psyco.full()
     except:
-        print "failed to import psyco Python optimizer"
+        print("failed to import psyco Python optimizer")
     else:
         psycoOn = True
 
@@ -105,7 +108,6 @@ def dumpTokens(s,l,t):
 module = None
 
 def parseModule(s,l,t):
-    import Module
     global module
     module = Module.Module({"name": t[0]})
 
@@ -121,7 +123,6 @@ def parsePort(s,l,t,port):
     # handle possibly many signal declarations
     while token != ';':
         if token == 'clk' or token == 'CLK' or token == 'Clk':
-            import PortClk
             if width != 1:
                 raise Exception("Expect clock signal " + token + " to have width=1, not " + str(width))
             module.add_port(PortClk.PortClk({ "name":token, "module":module, "busMember":False, "bitIdx":None, "busName":None } ))
@@ -137,19 +138,16 @@ def parsePort(s,l,t,port):
         token = t[idx]
 
 def parseInput(s,l,t):
-    import PortIn
     if t[0][0] != 'input':
         raise Exception("Expected input identifier")
     parsePort(s,l,t[0],PortIn.PortIn)
 
 def parseOutput(s,l,t):
-    import PortOut
     if t[0][0] != 'output':
         raise Exception("Expected output identifier")
     parsePort(s,l,t[0],PortOut.PortOut)
 
 def parseSubmod(s,l,t):
-    import Cell
     t = t[0]
     global module
     submodname = t[0]
@@ -182,9 +180,9 @@ def parseSubmod(s,l,t):
                     try:
                         net = module.new_net({ "name":netName, "width":1, "busMember":False, "bitIdx":None,   "busName":None    })
                     except:
-                        print 'tok =', tok
-                        print 'netName =', netName
-                        print 'isBus =', isBus
+                        print('tok =', tok)
+                        print('netName =', netName)
+                        print('isBus =', isBus)
                         raise
             #
             tmp = tok[0].split('.')
@@ -709,10 +707,10 @@ def test( strng ):
     tokens = []
     try:
         tokens = Verilog_BNF().parseString( strng )
-    except ParseException, err:
-        print err.line
-        print " "*(err.column-1) + "^"
-        print err
+    except ParseException as err:
+        print(err.line_)
+        print(" "*(err.column-1) + "^")
+        print(err)
     return tokens
 
 
@@ -720,10 +718,10 @@ def parseFile(fileName):
     tokens = []
     try:
         tokens = Verilog_BNF().parseFile( fileName )
-    except ParseException, err:
-        print err.line
-        print " "*(err.column-1) + "^"
-        print err
+    except ParseException as err:
+        print(err.line)
+        print(" "*(err.column-1) + "^")
+        print(err)
 
     #tokens = []
     #numlines = 0
@@ -740,7 +738,7 @@ def parseFile(fileName):
     #elapsed = time2-time1
     #totalTime += elapsed
     #if ( len( tokens ) ):
-    #    print "OK", elapsed
+    #    print("OK", elapsed)
     return module
 
 #~ if __name__ == "__main__":
@@ -756,12 +754,12 @@ def parseFile(fileName):
 #
 #else:
 #    def main():
-#        print "Verilog parser test (V %s)" % __version__
-#        print " - using pyparsing version", pyparsing.__version__
-#        print " - using Python version", sys.version
-#        if packratOn: print " - using packrat parsing"
-#        if psycoOn: print " - using psyco runtime optimization"
-#        print
+#        print("Verilog parser test (V %s)" % __version__)
+#        print(" - using pyparsing version", pyparsing.__version__)
+#        print(" - using Python version", sys.version)
+#        if packratOn: print(" - using packrat parsing")
+#        if psycoOn: print(" - using psyco runtime optimization")
+#        print()
 #
 #        import os
 #        import gc
@@ -788,7 +786,7 @@ def parseFile(fileName):
 #            infile = file(fnam)
 #            filelines = infile.readlines()
 #            infile.close()
-#            print fnam, len(filelines),
+#            print(fnam, len(filelines)),
 #            numlines += len(filelines)
 #            teststr = "".join(filelines)
 #            time1 = time.clock()
@@ -798,10 +796,10 @@ def parseFile(fileName):
 #            elapsed = time2-time1
 #            totalTime += elapsed
 #            if ( len( tokens ) ):
-#                print "OK", elapsed
-#                #~ print "tokens="
+#                print("OK", elapsed)
+#                #~ print("tokens=")
 #                #~ pp.pprint( tokens.asList() )
-#                #~ print
+#                #~ print()
 #
 #                ofnam = fileDir + "/parseOutput/" + vfile + ".parsed.txt"
 #                outfile = file(ofnam,"w")
@@ -812,16 +810,16 @@ def parseFile(fileName):
 #                outfile.write("\n")
 #                outfile.close()
 #            else:
-#                print "failed", elapsed
+#                print("failed", elapsed)
 #                failCount += 1
 #        endTime = time.clock()
-#        print "Total parse time:", totalTime
-#        print "Total source lines:", numlines
-#        print "Average lines/sec:", ( "%.1f" % (float(numlines)/(totalTime+.05 ) ) )
+#        print("Total parse time:", totalTime)
+#        print("Total source lines:", numlines)
+#        print("Average lines/sec:", ( "%.1f" % (float(numlines)/(totalTime+.05 ) ) ))
 #        if failCount:
-#            print "FAIL - %d files failed to parse" % failCount
+#            print("FAIL - %d files failed to parse" % failCount)
 #        else:
-#            print "SUCCESS - all files parsed"
+#            print("SUCCESS - all files parsed")
 #
 #        return 0
 #

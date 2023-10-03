@@ -1,4 +1,4 @@
-from Generic import *
+from .Generic import Generic
 
 class Net(Generic):
     "A Verilog net"
@@ -14,7 +14,7 @@ class Net(Generic):
 
         if self.__width > 1:          
             if self.__msb == None or self.__lsb == None:
-                print "Warning: using default msb/lsb for " + self.name
+                print("Warning: using default msb/lsb for " + self.name)
                 self.__msb = self.__width-1
                 self.__lsb = 0
                 #raise Exception("width without msb and lsb")

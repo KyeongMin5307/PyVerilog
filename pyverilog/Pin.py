@@ -1,4 +1,4 @@
-from Generic import *
+from .Generic import Generic
 
 class Pin(Generic):
     "Defines a Verilog Pin"

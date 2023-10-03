@@ -1,6 +1,6 @@
-from Generic import *
-from ordereddict import OrderedDict
-import Pin
+from collections import OrderedDict
+from .Generic import Generic
+from . import Pin
 
 class Cell(Generic):
     "Defines an instantiated Cell"
@@ -29,5 +29,5 @@ class Cell(Generic):
 
     def linkMod(self, mod):
         if self.__submod != None:
-            print "Warning: " + self.name + " multiply linked"
+            print("Warning: " + self.name + " multiply linked")
         self.__submod = mod

@@ -1,9 +1,6 @@
-from Generic import *
-from ordereddict import OrderedDict
-import Cell
-import Net
-import Port
-
+from collections import OrderedDict
+from .Generic import Generic
+from . import Cell, Net, Port
 
 class Module(Generic):
     "Defines a Verilog Module"
